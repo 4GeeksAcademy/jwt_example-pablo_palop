@@ -1,5 +1,6 @@
-export const initialStore=()=>{
-  return{
+export const initialStore = () => {
+  return {
+    user: null,     // Aquí guardamos el usuario autenticado
     message: null,
     todos: [
       {
@@ -13,26 +14,33 @@ export const initialStore=()=>{
         background: null,
       }
     ]
-  }
-}
+  };
+};
 
 export default function storeReducer(store, action = {}) {
-  switch(action.type){
+  switch (action.type) {
+    case 'set_user':
+      return {
+        ...store,
+        user: action.payload
+      };
+
     case 'set_hello':
       return {
         ...store,
         message: action.payload
       };
-      
+
     case 'add_task':
-
-      const { id,  color } = action.payload
-
+      const { id, color } = action.payload;
       return {
         ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
+        todos: store.todos.map((todo) =>
+          todo.id === id ? { ...todo, background: color } : todo
+        )
       };
+
     default:
       throw Error('Unknown action.');
-  }    
+  }
 }

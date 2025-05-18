@@ -31,11 +31,15 @@ def public_route():
 def private_route():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    response_body = {
-        "message": f"Hola {user.email}, soy una ruta privada"
-    }
 
-    return jsonify(response_body), 200
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    return jsonify({
+        "message": f"Hola {user.email}, soy una ruta privada",
+        "user": user.serialize()  
+    }), 200
+
 
 
 @api.route('/user/login', methods=["POST"])

@@ -43,3 +43,20 @@ export const createUser = async (email, password) => {
         throw error;
     }
 };
+
+export const validateToken = async (token) => {
+    const response = await fetch(`${API_URL}/private`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.msg || data.error || "Token inválido");
+    }
+
+    return { user: data.user };
+};

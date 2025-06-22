@@ -43,11 +43,11 @@ def private_route():
 
 
 @api.route('/user/login', methods=["POST"])
-def sing_in():
+def sign_in():
     data_request = request.get_json()
 
-    if not 'email' in data_request or not 'password' in data_request:
-        return jsonify({"error": "Los campos: email, password son requeridos"}), 400
+    if not data_request or 'email' not in data_request or 'password' not in data_request:
+        return jsonify({"error": "Los campos: email y password son requeridos"}), 400
 
     user = User.query.filter_by(email=data_request["email"]).first()
 
@@ -63,8 +63,9 @@ def sing_in():
     except Exception as e:
         print(e)
         db.session.rollback()
-        return jsonify({"error": "Error en el servido"}), 500
-    
+        return jsonify({"error": "Error en el servidor"}), 500
+
+
 
 @api.route('/user/create', methods=["POST"])
 def create_user():
@@ -76,7 +77,8 @@ def create_user():
     new_user = User(
         email=data_request["email"],
         password=bcrypt.generate_password_hash(
-            data_request["password"]).decode('utf-8')
+            data_request["password"]).decode('utf-8'),
+        is_active=True
     )
 
     try:

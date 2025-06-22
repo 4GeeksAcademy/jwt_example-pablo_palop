@@ -20,15 +20,16 @@ export const Home = () => {
                 setSuccess(res.msg);
                 setError("");
                 setIsRegistering(false);
+                setEmail("");
+                setPassword("");
             } else {
                 const data = await loginUser(email, password);
-                localStorage.setItem("token", data.token);
                 dispatch({ type: "set_user", payload: data.user });
                 setError("");
                 navigate("/private");
             }
-        } catch (err) {
-            setError(err.message);
+        } catch (error) {
+            setError(error.message);
             setSuccess("");
         }
     };
@@ -65,6 +66,8 @@ export const Home = () => {
                         setIsRegistering(!isRegistering);
                         setError("");
                         setSuccess("");
+                        setEmail("");
+                        setPassword("");
                     }}
                     className="btn btn-link"
                 >

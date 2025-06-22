@@ -1,4 +1,4 @@
-const API_URL = "https://cautious-disco-5w45g9gpj47c4jwg-3000.app.github.dev/" + "/api";
+const API_URL = "https://cautious-disco-5w45g9gpj47c4jwg-3001.app.github.dev/api";
 
 export const loginUser = async (email, password) => {
     try {
@@ -15,7 +15,7 @@ export const loginUser = async (email, password) => {
         if (!response.ok) {
             throw new Error(data.msg || data.error || "Login fallido");
         }
-
+        sessionStorage.setItem("token", data.token);
         return data;
     } catch (error) {
         throw error;
@@ -44,19 +44,32 @@ export const createUser = async (email, password) => {
     }
 };
 
-export const validateToken = async (token) => {
-    const response = await fetch(`${API_URL}/private`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.msg || data.error || "Token inválido");
+export const validateToken = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        throw new Error("No hay token en sessionStorage.");
     }
 
-    return { user: data.user };
+    try {
+        const response = await fetch(`${API_URL}/private`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.msg || data.error || "Token inválido o expirado");
+        }
+
+        return { user: data.user };
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const logoutUser = () => {
+    sessionStorage.removeItem("token");
 };
